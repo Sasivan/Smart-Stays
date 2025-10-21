@@ -1,0 +1,32 @@
+Data Quality Report
+===================
+
+Number of rows: 15188
+Number of columns: 83
+
+Missing values per column:
+id                                1
+listing_url                       0
+scrape_id                         0
+last_scraped                      0
+source                            0
+                                 ..
+reviews_per_month                 2
+reviews_per_month_imputed         2
+days_since_last_review            2
+days_since_last_review_imputed    2
+num_amenities                     2
+Length: 83, dtype: int64
+
+Descriptive statistics for numeric columns:
+                 id  ...  num_amenities
+count  1.518700e+04  ...   15186.000000
+mean   5.995245e+17  ...      40.194324
+std    5.520278e+17  ...      19.225870
+min    5.456000e+03  ...       1.000000
+25%    3.215426e+07  ...      24.000000
+50%    6.973160e+17  ...      41.000000
+75%    1.128970e+18  ...      55.000000
+max    1.441661e+18  ...     116.000000
+
+[8 rows x 46 columns]

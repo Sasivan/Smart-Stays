@@ -100,9 +100,3 @@ celerybeat-schedule
 *.njsproj
 *.sln
 *.sw?
-
-# Environment variables
-.env
-
-# Data files
-data/
