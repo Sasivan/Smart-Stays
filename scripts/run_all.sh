@@ -7,10 +7,10 @@ echo "--- Starting Smart Stays Pipeline ---"
 
 # --- CORRECTED PATHS ---
 # Go up one level (from 'scripts' to project root) to find 'venv'
-VENV_PYTHON="../venv/bin/python"
+VENV_PYTHON="venv/bin/python"
 
 # Go up one level to find the 'src' directory
-SRC_DIR="../src"
+SRC_DIR="src"
 # --- END CORRECTIONS ---
 
 

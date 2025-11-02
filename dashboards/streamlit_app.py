@@ -5,33 +5,18 @@ import logging
 from pathlib import Path
 import matplotlib.pyplot as plt
 import sys
-import subprocess
 import os
-import streamlit.components.v1 as components 
+# import subprocess # Removed
+# import streamlit.components.v1 as components # Removed
 
 # --- Dynamic Path Setup ---
 DASHBOARD_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = DASHBOARD_DIR.parent
 SRC_DIR = PROJECT_DIR / "src"
-REPORTS_DIR = PROJECT_DIR / "reports" 
+# REPORTS_DIR = PROJECT_DIR / "reports" # Removed, no longer needed
 
 # --- Define Paths for All Notebooks and Output HTMLs ---
-NOTEBOOK_01_PATH = PROJECT_DIR / "notebooks/01_eda.ipynb"
-HTML_01_OUTPUT_PATH = DASHBOARD_DIR / "01_eda_rendered.html"
-
-NOTEBOOK_02_PATH = PROJECT_DIR / "notebooks/02_feature_engineering.ipynb"
-HTML_02_OUTPUT_PATH = DASHBOARD_DIR / "02_feature_engineering_rendered.html"
-
-NOTEBOOK_03_PATH = PROJECT_DIR / "notebooks/03_modeling.ipynb"
-HTML_03_OUTPUT_PATH = DASHBOARD_DIR / "03_modeling_rendered.html"
-
-# --- Define Path for the Final Markdown Report ---
-REPORT_PATH = REPORTS_DIR / "final_summary.md" 
-
-# --- Define Paths for Images ---
-LGBM_IMPORTANCE_PATH = REPORTS_DIR / "lgbm_feature_importance.png"
-SHAP_BAR_PATH = REPORTS_DIR / "shap_summary_bar.png"
-SHAP_BEESWARM_PATH = REPORTS_DIR / "shap_summary_beeswarm.png"
+# --- All notebook, HTML, report, and image paths removed as tabs are no longer in use ---
 
 
 sys.path.append(str(SRC_DIR))
@@ -59,50 +44,15 @@ ORIGINAL_DATA_PATH = PROJECT_DIR / "data/processed/listings.parquet"
 
 
 # --- NBConvert Rendering Function (Cached, run when tab is clicked) ---
-@st.cache_data(show_spinner=False)
-def get_notebook_html(notebook_path, output_path, spinner_text):
-    """
-    Executes nbconvert and loads the resulting HTML file.
-    """
-    if not notebook_path.exists():
-        return f"❌ Notebook not found at: {notebook_path}"
-
-    with st.spinner(spinner_text):
-        command = [
-            "jupyter", "nbconvert", 
-            str(notebook_path), 
-            "--to", "html", 
-            f"--output={output_path.name}", 
-            f"--output-dir={output_path.parent}",
-            "--execute", 
-        ]
-        
-        try:
-            subprocess.run(command, check=True, capture_output=True, text=True)
-            
-            if output_path.exists():
-                with open(output_path, 'r', encoding='utf-8') as f:
-                    return f.read()
-            else:
-                return f"❌ nbconvert finished, but output file not found at: {output_path}"
-
-        except subprocess.CalledProcessError as e:
-            error_message = f"❌ nbconvert failed! Error: {e.stderr}"
-            return error_message
-        except FileNotFoundError:
-            return "❌ Error: 'jupyter' or 'nbconvert' command not found. Ensure Jupyter/nbconvert is installed and in your PATH."
-        except Exception as e:
-            return f"❌ An unexpected error occurred during rendering: {e}"
+# @st.cache_data(show_spinner=False) # Removed
+# def get_notebook_html(notebook_path, output_path, spinner_text): # Removed
+#     ... # Function removed
 
 
 # --- Function to load the Final Report Markdown ---
-@st.cache_data
-def load_report_markdown(report_path: Path) -> str:
-    """Loads the final analysis report content."""
-    if report_path.exists():
-        with open(report_path, 'r', encoding='utf-8') as f:
-            return f.read()
-    return "❌ Report file not found. Please ensure `reports/report_analysis.py` has been run successfully to generate `reports/final_summary.md`."
+# @st.cache_data # Removed
+# def load_report_markdown(report_path: Path) -> str: # Removed
+#     ... # Function removed
 
 
 # --- Load Resources (Model, Categories) ---
@@ -192,14 +142,10 @@ if model is None or category_info is None or df_display is None:
     st.error("App initialization failed. Cannot proceed.")
     st.stop()
     
-# --- Tabs (PRIORITIZED ORDER: Market, Prediction, Report) ---
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "Market Overview 🗺️",      # 1st
-    "Price Prediction 💰",      # 2nd
-    "Project Report 📄",         # 3rd 
-    "Full EDA 📊",              # 4th 
-    "Feature Engineering 🛠️",   # 5th 
-    "Modeling 🧠"               # 6th 
+# --- Tabs (MODIFIED: Kept only 2 tabs) ---
+tab1, tab2 = st.tabs([
+    "Market Overview 🗺️",
+    "Price Prediction 💰"
 ])
 
 # =========================
@@ -382,104 +328,30 @@ with tab2:
             st.error("Prediction failed.")
 
 # ==========================================================
-# === Project Report Tab (Tab 3: NEW PRIORITY) ===
+# === Project Report Tab (Tab 3: REMOVED) ===
 # ==========================================================
-with tab3:
-    st.header("Final Project Analysis Report")
-    st.markdown("This report summarizes the entire workflow, data, and model performance, with **embedded artifacts**.")
-    st.markdown("---")
-    
-    report_markdown_content = load_report_markdown(REPORT_PATH)
-    
-    # Display the structural Markdown content
-    if report_markdown_content.startswith("❌"):
-        st.error(report_markdown_content)
-    else:
-        st.markdown(report_markdown_content, unsafe_allow_html=True)
-        
-        # --- Explicitly display PNGs using st.image in a column layout ---
-        st.subheader("Model Interpretation & Diagnostics")
-        
-        # Create 3 columns for side-by-side display
-        col_lgbm, col_bar, col_beeswarm = st.columns(3)
-
-        # Display Feature Importance (Col 1)
-        with col_lgbm:
-            st.markdown("**LGBM Feature Importance**")
-            st.caption("A visual representation of the overall Gini importance of features derived from the trained LightGBM model.")
-            if LGBM_IMPORTANCE_PATH.exists():
-                st.image(str(LGBM_IMPORTANCE_PATH), use_container_width=True) # FIX: Reverted to use_container_width
-            else:
-                st.warning(f"Image not found: {LGBM_IMPORTANCE_PATH.name}")
-
-        # Display SHAP Summary Bar (Col 2)
-        with col_bar:
-            st.markdown("**SHAP Summary Bar**")
-            st.caption("A summary bar plot showing the average impact (magnitude) of the top features on the model's output, derived from SHAP values.")
-            if SHAP_BAR_PATH.exists():
-                st.image(str(SHAP_BAR_PATH), use_container_width=True) # FIX: Reverted to use_container_width
-            else:
-                st.warning(f"Image not found: {SHAP_BAR_PATH.name}")
-
-        # Display SHAP Beeswarm (Col 3)
-        with col_beeswarm:
-            st.markdown("**SHAP Beeswarm Plot**")
-            st.caption("A detailed SHAP beeswarm plot showing how feature values affect the prediction outcome.")
-            if SHAP_BEESWARM_PATH.exists():
-                st.image(str(SHAP_BEESWARM_PATH), use_container_width=True) # FIX: Reverted to use_container_width
-            else:
-                st.warning(f"Image not found: {SHAP_BEESWARM_PATH.name}")
-        
-        st.markdown(f"***\n*Model Scores and raw metrics are contained in `model_scores.json` in the `/reports` directory.*")
-
+# with tab3:
+#     ... # Content removed
 
 # =========================================================
-# === Full EDA Tab (Tab 4: Background) ===
+# === Full EDA Tab (Tab 4: REMOVED) ===
 # =========================================================
-with tab4:
-    st.header("Full Exploratory Data Analysis Report")
-    st.markdown(f"This content is generated by executing and converting `{NOTEBOOK_01_PATH.name}` to HTML using `jupyter nbconvert`.")
-    st.markdown("---")
-    
-    eda_html_content = get_notebook_html(NOTEBOOK_01_PATH, HTML_01_OUTPUT_PATH, "Rendering EDA Notebook...")
-
-    if eda_html_content.startswith("❌"):
-        st.error(eda_html_content)
-    else:
-        components.html(eda_html_content, height=2000, scrolling=True)
+# with tab4:
+#     ... # Content removed
 
 # ======================================================================
-# === Feature Engineering Tab (Tab 5: Background) ===
+# === Feature Engineering Tab (Tab 5: REMOVED) ===
 # ======================================================================
-with tab5:
-    st.header("Feature Engineering Report")
-    st.markdown(f"Details on how raw features were transformed for modeling, extracted from `{NOTEBOOK_02_PATH.name}`.")
-    st.markdown("---")
-    
-    feature_html_content = get_notebook_html(NOTEBOOK_02_PATH, HTML_02_OUTPUT_PATH, "Rendering Feature Engineering Notebook...")
-
-    if feature_html_content.startswith("❌"):
-        st.error(feature_html_content)
-    else:
-        components.html(feature_html_content, height=2000, scrolling=True)
+# with tab5:
+#     ... # Content removed
 
 # ==========================================================
-# === Modeling Tab (Tab 6: Background) ===
+# === Modeling Tab (Tab 6: REMOVED) ===
 # ==========================================================
-with tab6:
-    st.header("Modeling and Training Report")
-    st.markdown(f"Details on the machine learning model selection, training, and evaluation, extracted from `{NOTEBOOK_03_PATH.name}`.")
-    st.markdown("---")
-    
-    modeling_html_content = get_notebook_html(NOTEBOOK_03_PATH, HTML_03_OUTPUT_PATH, "Rendering Modeling Notebook...")
-
-    if modeling_html_content.startswith("❌"):
-        st.error(modeling_html_content)
-    else:
-        components.html(modeling_html_content, height=2000, scrolling=True)
+# with tab6:
+#     ... # Content removed
 
 
 # --- Footer ---
 st.markdown("---")
 st.caption("Smart Stays Price Prediction Model v0.1")
-

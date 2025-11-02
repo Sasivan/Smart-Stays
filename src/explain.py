@@ -11,9 +11,9 @@ from sklearn.model_selection import train_test_split # Needed to re-create test 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Define file paths
-PROCESSED_PATH = Path("../data/processed/listings_featured.parquet")
-MODEL_PATH = Path("../models/lgbm_baseline_model.joblib")
-REPORTS_DIR = Path("../reports")
+PROCESSED_PATH = Path("data/processed/listings_featured.parquet")
+MODEL_PATH = Path("models/lgbm_baseline_model.joblib")
+REPORTS_DIR = Path("reports")
 
 # --- Main Explainability Function ---
 

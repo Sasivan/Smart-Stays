@@ -10,8 +10,8 @@ import sys
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Define file paths
-RAW_DATA_PATH = "../data/raw/listings.csv.gz"
-PROCESSED_DIR = "../data/processed"
+RAW_DATA_PATH = "data/raw/listings.csv.gz"
+PROCESSED_DIR = "data/processed"
 PROCESSED_DATA_PATH_CSV = os.path.join(PROCESSED_DIR, "listings.csv")
 PROCESSED_DATA_PATH_PARQUET = os.path.join(PROCESSED_DIR, "listings.parquet")
 REPORT_PATH = os.path.join(PROCESSED_DIR, "data_quality_report.txt")

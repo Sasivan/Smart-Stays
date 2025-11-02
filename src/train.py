@@ -20,9 +20,9 @@ import lightgbm as lgb
 # --- Configuration & Setup ---
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-PROCESSED_PATH = Path("../data/processed/listings_featured.parquet")
-MODELS_DIR = Path("../models")
-REPORTS_DIR = Path("../reports")
+PROCESSED_PATH = Path("data/processed/listings_featured.parquet")
+MODELS_DIR = Path("models")
+REPORTS_DIR = Path("reports")
 # Path to save category info
 CATEGORY_INFO_PATH = MODELS_DIR / "categorical_feature_info.json"
 

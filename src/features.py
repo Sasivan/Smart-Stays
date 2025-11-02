@@ -13,8 +13,8 @@ from sklearn.preprocessing import StandardScaler
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Define file paths
-INPUT_PATH = Path("../data/processed/listings.parquet")
-OUTPUT_PATH = Path("../data/processed/listings_featured.parquet")
+INPUT_PATH = Path("data/processed/listings.parquet")
+OUTPUT_PATH = Path("data/processed/listings_featured.parquet")
 
 # Define some popular amenities to check for
 COMMON_AMENITIES = [
